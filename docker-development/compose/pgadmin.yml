@@ -1,0 +1,23 @@
+version: "2.2"
+
+networks:
+  default:
+  frontend:
+    name: frontend
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-pgadmin.rule=Host(`pgadmin.${DOMAIN_SECONDARY}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-pgadmin.loadbalancer.server.port=80
+    networks:
+      - default
+      - frontend
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@domain.com} # Cannot be changed after first launch
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-secret} # Cannot be changed after first launch
+    volumes:
+      - ${PATH_DATA:-./data}/pgadmin:/var/lib/pgadmin # Delete data files to start again with new user

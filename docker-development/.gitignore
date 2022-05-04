@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+
+services
+services.*
+!services.example
+
+hosts
+
+docker-compose.override.yml

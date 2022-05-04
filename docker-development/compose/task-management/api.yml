@@ -1,0 +1,42 @@
+version: "2.2"
+
+networks:
+  default:
+  frontend:
+    name: frontend
+
+services:
+  backend-express:
+    image: node:16.15.0-alpine3.15
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-express-api.rule=Host(`${DOMAIN_WEB}`) && PathPrefix(`/api`)"
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-express-api.loadbalancer.server.port=3000
+    networks:
+      - default
+      - frontend
+    working_dir: /backend-express
+    ports:
+      - 3000:3000
+    volumes:
+      - ${PATH_BACKEND_EXPRESS}:/backend-express
+      - ${HOSTS_FILE}:/etc/hosts
+    tty: true
+
+  # backend-nginx:
+  #   image: nginx:alpine
+  #   restart: always
+  #   entrypoint: sh
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.${COMPOSE_PROJECT_NAME}-nginx.rule=Host(`${DOMAIN}`)
+  #     - traefik.http.services.${COMPOSE_PROJECT_NAME}-nginx.loadbalancer.server.port=80
+  #     - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-api-stripprefix.stripprefix.prefixes=${API_PATH_PREFIX:-/api}
+  #     - traefik.http.middlewares.${COMPOSE_PROJECT_NAME}-api-stripprefix.stripprefix.forceSlash=false
+  #     - traefik.http.routers.${COMPOSE_PROJECT_NAME}-api-pathprefix.rule=Host(`${DOMAIN_WEB}`) && PathPrefix(`${API_PATH_PREFIX:-/api}`)
+  #     - traefik.http.routers.${COMPOSE_PROJECT_NAME}-api-pathprefix.middlewares=${COMPOSE_PROJECT_NAME}-api-stripprefix@docker
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - ${COMPOSE_PROJECT_NAME}-api

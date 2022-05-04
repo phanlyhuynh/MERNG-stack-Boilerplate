@@ -1,0 +1,13 @@
+version: "2.2"
+
+services:
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    mem_limit: ${MEMORY_LIMIT_POSTGRES:-1G}
+    volumes:
+      - ${PATH_DATA:-./data}/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}

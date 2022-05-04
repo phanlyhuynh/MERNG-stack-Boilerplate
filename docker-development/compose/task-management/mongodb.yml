@@ -1,0 +1,22 @@
+version: "2.2"
+
+services:
+  task-mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: task-management
+      MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_DATABASE: task-management
+      MONGO_DATABASE_USERNAME: task-management
+      MONGO_DATABASE_PASSWORD: secret
+    volumes:
+      - ${PATH_DATA:-./data}/mongodb:/data/db
+      - ./config/mongodb/home/mongodb:/home/mongodb
+  task-adminer:
+    image: phanlyhuynh/adminer:v1.0
+    environment:
+        ADMINER_DEFAULT_SERVER: task-mongodb
+        ADMINER_DESIGN: huynhpl
+    ports:
+      - 8080:8080
